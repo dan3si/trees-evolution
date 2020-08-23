@@ -31,15 +31,13 @@ let methods = {
       energy: 0,
       __proto__: methods,
     };
-    seed.element.className = 'seed';
+    seed.element.style.background = '#fff'
   
     targetCell.append(seed.element);
     this.seeds.push(seed);
     this.partsCount++;
   }
 }
-
-let trees = [];
 
 function createTree(genom) {
   return {
@@ -50,23 +48,10 @@ function createTree(genom) {
     seeds: [],
     genom,
     inFall: true,
+    color: `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`,
     __proto__: methods,
   };
 }
-
-let startGenom = [];
-for (let i = 0; i < 16; i++) {
-  startGenom.push( [
-    Math.floor(Math.random() * 31),
-    Math.floor(Math.random() * 31),
-    Math.floor(Math.random() * 31),
-    Math.floor(Math.random() * 31)]);
-}
-trees.push(createTree(startGenom));
-
-trees[0].addSeed(32, 1, trees[0].genom[0]);
-trees[0].seeds[0].pourEnergy(trees[0].seeds[0]);
-
 
 function start() {
   for (let tree of [...trees]) {
@@ -92,7 +77,7 @@ function start() {
     }
     tree.energy -= tree.partsCount * 13;
   
-    if (tree.energy < 0 || tree.age > 30 || tree.partsCount === tree.woods.length) {
+    if (tree.energy < 0 || tree.age > 30) {
       for (let wood of tree.woods) {
         wood.element.remove();
       }
@@ -123,7 +108,7 @@ function start() {
       if (seed.energy < 18) continue;
   
       tree.woods.push(tree.seeds.splice(tree.seeds.indexOf(seed),1)[0]);
-      seed.element.className = 'wood';
+      seed.element.style.background = tree.color;
   
       if (seed.activeGenom[0] < 16) {
         tree.addSeed(seed.x - 1, seed.y, tree.genom[seed.activeGenom[0]]);
@@ -150,12 +135,28 @@ function start() {
   }
 };
 
+let trees = [];
+
+let startGenom = [];
+for (let i = 0; i < 16; i++) {
+  startGenom.push( [
+    Math.floor(Math.random() * 31),
+    Math.floor(Math.random() * 31),
+    Math.floor(Math.random() * 31),
+    Math.floor(Math.random() * 31)]);
+}
+trees.push(createTree(startGenom));
+
+trees[0].addSeed(32, 1, trees[0].genom[0]);
+trees[0].seeds[0].pourEnergy(trees[0].seeds[0]);
+
 let timer;
-document.onkeypress = () => {
+document.onclick = () => {
   if (timer) {
     clearInterval(timer)
-    timer = null;   
+    timer = null;
+    console.log(trees);
   } else {
-    timer = setInterval(start, 100);
+    timer = setInterval(start, 10);
   }
 }
