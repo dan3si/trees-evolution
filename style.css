@@ -1,0 +1,32 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background: #333;
+}
+
+table {
+  margin: 100px auto;
+  border: 2px solid white;
+  transform: rotateX(180deg);
+}
+
+th {
+  height: 10px;
+  width: 10px;
+}
+
+.wood {
+  width: 100%;
+  height: 100%;
+  background: green;
+}
+
+.seed {
+  width: 100%;
+  height: 100%;
+  background: white;
+}
