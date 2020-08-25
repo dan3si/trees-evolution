@@ -246,7 +246,7 @@ trees[0].addSeed(32, 1, trees[0].genom[0]);
 trees[0].seeds[0].pourEnergy(trees[0].seeds[0]);
 
 let timer;
-document.onclick = () => {
+document.querySelector('table').onclick = () => {
   if (timer) {
     clearInterval(timer)
     timer = null;
