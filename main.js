@@ -1,3 +1,102 @@
+let myGen = [
+  [
+    14,
+    13,
+    12,
+    30
+  ],
+  [
+    14,
+    30,
+    12,
+    30
+  ],
+  [
+    30,
+    30,
+    2,
+    9
+  ],
+  [
+    30,
+    30,
+    30,
+    30
+  ],
+  [
+    30,
+    0,
+    30,
+    30
+  ],
+  [
+    5,
+    10,
+    30,
+    30
+  ],
+  [
+    30,
+    6,
+    30,
+    30
+  ],
+  [
+    13,
+    30,
+    30,
+    13
+  ],
+  [
+    30,
+    15,
+    30,
+    30
+  ],
+  [
+    30,
+    30,
+    0,
+    30
+  ],
+  [
+    30,
+    30,
+    30,
+    30
+  ],
+  [
+    30,
+    5,
+    2,
+    30
+  ],
+  [
+    2,
+    30,
+    30,
+    7
+  ],
+  [
+    30,
+    8,
+    30,
+    30
+  ],
+  [
+    30,
+    9,
+    30,
+    30
+  ],
+  [
+    15,
+    30,
+    9,
+    30
+  ]
+];
+
 let methods = {
   pourEnergy(element) {
     let overlaps = 0;
@@ -17,7 +116,7 @@ let methods = {
 
     let targetCell = document.querySelector(`tr:nth-child(${y}) > th:nth-child(${x})`);
   
-    if (y < 1 || y > 16
+    if (y < 1 || y > 24
       || targetCell.children.length) {
         return;
     }
@@ -53,13 +152,13 @@ function createTree(genom) {
   };
 }
 
-function start() {
+function doStep() {
   for (let tree of [...trees]) {
     if (tree.inFall) {
       if (tree.seeds[0].y > 1) {
-        tree.seeds[0].y--
-        let targetCell = document.querySelector(`tr:nth-child(${tree.seeds[0].y}) > th:nth-child(${tree.seeds[0].x})`);
+        let targetCell = document.querySelector(`tr:nth-child(${tree.seeds[0].y - 1}) > th:nth-child(${tree.seeds[0].x})`);
         if (!targetCell.children.length) {
+          tree.seeds[0].y--
           targetCell.append(tree.seeds[0].element);
         } else {
           trees.splice(trees.indexOf(tree), 1);
@@ -86,12 +185,8 @@ function start() {
       for (let seed of tree.seeds) {
         seed.element.remove();
 
-        let newGenom = [];
-        tree.genom.forEach((gen) => {
-          newGenom.push([...gen]);
-        });
-
-        if (Math.random() > 0.8) {
+        let newGenom = tree.genom.map(gen => [...gen]);
+        if (Math.random() > 0.75) {
           newGenom[Math.floor(Math.random() * 16)][Math.floor(Math.random() * 4)] = Math.floor(Math.random() * 31);
         }
 
@@ -145,7 +240,7 @@ for (let i = 0; i < 16; i++) {
     Math.floor(Math.random() * 31),
     Math.floor(Math.random() * 31)]);
 }
-trees.push(createTree(startGenom));
+trees.push(createTree(myGen));
 
 trees[0].addSeed(32, 1, trees[0].genom[0]);
 trees[0].seeds[0].pourEnergy(trees[0].seeds[0]);
@@ -157,6 +252,6 @@ document.onclick = () => {
     timer = null;
     console.log(trees);
   } else {
-    timer = setInterval(start, 10);
+    timer = setInterval(doStep, 10);
   }
 }
