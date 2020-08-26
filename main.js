@@ -1,102 +1,3 @@
-let myGen = [
-  [
-    14,
-    13,
-    12,
-    30
-  ],
-  [
-    14,
-    30,
-    12,
-    30
-  ],
-  [
-    30,
-    30,
-    2,
-    9
-  ],
-  [
-    30,
-    30,
-    30,
-    30
-  ],
-  [
-    30,
-    0,
-    30,
-    30
-  ],
-  [
-    5,
-    10,
-    30,
-    30
-  ],
-  [
-    30,
-    6,
-    30,
-    30
-  ],
-  [
-    13,
-    30,
-    30,
-    13
-  ],
-  [
-    30,
-    15,
-    30,
-    30
-  ],
-  [
-    30,
-    30,
-    0,
-    30
-  ],
-  [
-    30,
-    30,
-    30,
-    30
-  ],
-  [
-    30,
-    5,
-    2,
-    30
-  ],
-  [
-    2,
-    30,
-    30,
-    7
-  ],
-  [
-    30,
-    8,
-    30,
-    30
-  ],
-  [
-    30,
-    9,
-    30,
-    30
-  ],
-  [
-    15,
-    30,
-    9,
-    30
-  ]
-];
-
 let methods = {
   pourEnergy(element) {
     let overlaps = 0;
@@ -107,7 +8,7 @@ let methods = {
       }
     }
 
-    this.energy += (5 + element.y) * (3 - overlaps);
+    this.energy += (energyIncomingBasics + (element.y * gainPerLevel)) * (3 - overlaps);
   },
 
   addSeed(x, y, activeGenom) {
@@ -141,7 +42,7 @@ let methods = {
 function createTree(genom) {
   return {
     age: 0,
-    energy: 300,
+    energy: startTreeEnergy,
     partsCount: 0,
     woods: [],
     seeds: [],
@@ -174,7 +75,7 @@ function doStep() {
     for (let wood of tree.woods) {
       tree.pourEnergy(wood);
     }
-    tree.energy -= tree.partsCount * 13;
+    tree.energy -= tree.partsCount * treeEnergyConsumption;
   
     if (tree.energy < 0 || tree.age > 30) {
       for (let wood of tree.woods) {
@@ -200,7 +101,7 @@ function doStep() {
     }
   
     for (let seed of [...tree.seeds]) {
-      if (seed.energy < 18) continue;
+      if (seed.energy < energyToSprout) continue;
   
       tree.woods.push(tree.seeds.splice(tree.seeds.indexOf(seed),1)[0]);
       seed.element.style.background = tree.color;
@@ -232,6 +133,12 @@ function doStep() {
 
 let trees = [];
 
+let startTreeEnergy = +document.querySelector('.startTreeEnergyInput').value;
+let energyToSprout = +document.querySelector('.seedEregyToSproutInput').value;
+let treeEnergyConsumption = +document.querySelector('.treeEregyConsumptionInput').value;
+let energyIncomingBasics = +document.querySelector('.sunIncomingBasicsInput').value;
+let gainPerLevel = +document.querySelector('.sunGainPerLevel').value;
+
 let startGenom = [];
 for (let i = 0; i < 16; i++) {
   startGenom.push( [
@@ -240,18 +147,38 @@ for (let i = 0; i < 16; i++) {
     Math.floor(Math.random() * 31),
     Math.floor(Math.random() * 31)]);
 }
-trees.push(createTree(myGen));
+
+trees.push(createTree(startGenom));
 
 trees[0].addSeed(32, 1, trees[0].genom[0]);
 trees[0].seeds[0].pourEnergy(trees[0].seeds[0]);
 
 let timer;
-document.querySelector('table').onclick = () => {
+
+const startButton = document.querySelector('.startButton');
+startButton.onclick = () => {
+  if (document.querySelector('.genomInput')) {
+    if (document.querySelector('.genomInput').value) {
+      trees[0].genom = eval(document.querySelector('.genomInput').value)
+    };
+    document.querySelector('.genomArea').remove();
+  }
+
   if (timer) {
     clearInterval(timer)
     timer = null;
+    startButton.innerHTML = 'START';
     console.log(trees);
   } else {
     timer = setInterval(doStep, 10);
+    startButton.innerHTML = 'STOP';
   }
+}
+
+document.querySelector('.applySettings').onclick = () => {
+  startTreeEnergy = +document.querySelector('.startTreeEnergyInput').value;
+  energyToSprout = +document.querySelector('.seedEregyToSproutInput').value;
+  treeEnergyConsumption = +document.querySelector('.treeEregyConsumptionInput').value;
+  energyIncomingBasics = +document.querySelector('.sunIncomingBasicsInput').value;
+  gainPerLevel = +document.querySelector('.sunGainPerLevel').value;
 }
